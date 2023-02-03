@@ -22,6 +22,8 @@
     // take snapshot from media
     ctx.drawImage(video, 0, 0, 640, 640);
     const data = canvas.toDataURL("image/png");
+    // console.log(data.replace(/^data:image\/(png|jpg);base64,/, ""));
+
     // download image data
     const link = document.createElement("a");
     link.download = "snapshot.png";

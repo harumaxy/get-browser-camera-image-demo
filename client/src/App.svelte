@@ -1,46 +1,36 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import Counter from './lib/Counter.svelte'
+  import { onMount } from "svelte";
+  const CANVAS_SIZE = 640;
+
+  // initialize html elements
+  const media = navigator.mediaDevices.getUserMedia({
+    video: {
+      width: CANVAS_SIZE,
+      height: CANVAS_SIZE,
+    },
+  });
+  let video: HTMLVideoElement;
+  media.then((stream) => {
+    video.srcObject = stream;
+  });
+  const canvas = document.createElement("canvas");
+  canvas.width = CANVAS_SIZE;
+  canvas.height = CANVAS_SIZE;
+  const ctx = canvas.getContext("2d");
+
+  const onClick = () => {
+    // take snapshot from media
+    ctx.drawImage(video, 0, 0, 640, 640);
+    const data = canvas.toDataURL("image/png");
+    // download image data
+    const link = document.createElement("a");
+    link.download = "snapshot.png";
+    link.href = data;
+    link.click();
+  };
 </script>
 
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer"> 
-      <img src="/vite.svg" class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer"> 
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+  <video id="video" width="640" height="640" autoplay bind:this={video} />
+  <button on:click={onClick}>Take Snap shot</button>
 </main>
-
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
